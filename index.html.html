@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Kaizen | Comércio Exterior</title>
+    <title>Simulador Kaizen | Business Intelligence</title>
     
     <!-- Fontes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,11 +13,11 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Bibliotecas PDF (jsPDF) -->
+    <!-- Bibliotecas: PDF e Gráficos -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Configurações Tailwind -->
     <script>
         tailwind.config = {
             theme: {
@@ -34,159 +34,91 @@
     <style>
         .fade-in { animation: fadeIn 0.6s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Utilitário para esconder seções */
         .hidden-section { display: none !important; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
-    <!-- ================= SEÇÃO 1: LANDING PAGE (CAPA) ================= -->
+    <!-- ================= SEÇÃO 1: LANDING PAGE ================= -->
     <section id="landing-section" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brand-900 to-brand-600 text-white p-6 relative overflow-hidden fade-in">
-        
-        <!-- Background Decorativo -->
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-10 pointer-events-none">
-            <svg class="absolute -top-24 -left-24 w-96 h-96 text-white" fill="currentColor" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"/></svg>
-            <svg class="absolute bottom-0 right-0 w-[500px] h-[500px] text-white" fill="currentColor" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50"/></svg>
-        </div>
-
         <div class="max-w-3xl text-center z-10">
             <div class="mb-6 inline-block p-4 bg-white/10 rounded-full backdrop-blur-sm border border-white/20 shadow-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
-            
-            <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight leading-tight">Simulador Kaizen</h1>
-            
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">Simulador Kaizen</h1>
             <p class="text-xl text-brand-100 mb-10 font-light max-w-2xl mx-auto">
-                Ferramenta essencial para Importadores. Calcule travas cambiais e analise em tempo real.
+                Analise o impacto do <b>timing cambial</b>. Compare seu estudo com o histórico real de PTAX desde a solicitação.
             </p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
-                <div class="bg-white/10 p-5 rounded-xl backdrop-blur-md border border-white/10 hover:bg-white/20 transition duration-300">
-                    <h3 class="font-semibold text-lg mb-2 flex items-center gap-2">📉 <span class="text-white">API Real-Time</span></h3>
-                    <p class="text-sm text-brand-100 leading-relaxed">Conexão direta com mercado financeiro para buscar o dólar comercial atualizado.</p>
-                </div>
-                <div class="bg-white/10 p-5 rounded-xl backdrop-blur-md border border-white/10 hover:bg-white/20 transition duration-300">
-                    <h3 class="font-semibold text-lg mb-2 flex items-center gap-2">📊 <span class="text-white">Análise de Spread</span></h3>
-                    <p class="text-sm text-brand-100 leading-relaxed">Simule cenários bancários e compare custos efetivos com seu planejamento.</p>
-                </div>
-                <div class="bg-white/10 p-5 rounded-xl backdrop-blur-md border border-white/10 hover:bg-white/20 transition duration-300">
-                    <h3 class="font-semibold text-lg mb-2 flex items-center gap-2">📑 <span class="text-white">Exportação PDF</span></h3>
-                    <p class="text-sm text-brand-100 leading-relaxed">Gere relatórios profissionais instantâneos.</p>
-                </div>
-            </div>
-
-            <!-- Botão com Seta para a Direita -->
-            <button onclick="goToDashboard()" class="inline-flex items-center justify-center bg-white text-brand-800 hover:bg-brand-50 hover:text-brand-900 px-10 py-4 rounded-full font-bold text-lg shadow-2xl transition transform hover:-translate-y-1 hover:shadow-white/20 gap-3 group cursor-pointer">
-                Acessar Simulador
-                <!-- Seta para a Direita -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <button onclick="goToDashboard()" class="inline-flex items-center justify-center bg-white text-brand-800 hover:bg-brand-50 px-10 py-4 rounded-full font-bold text-lg shadow-2xl transition transform hover:-translate-y-1 gap-3">
+                Acessar Simulador Pro
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
             </button>
-            
-            <p class="mt-6 text-xs text-brand-200 opacity-60">Versão 1.2 • Kaizen Solutions</p>
         </div>
     </section>
 
-    <!-- ================= SEÇÃO 2: DASHBOARD (SIMULADOR) ================= -->
+    <!-- ================= SEÇÃO 2: DASHBOARD ================= -->
     <section id="dashboard-section" class="hidden-section min-h-screen pb-10 bg-slate-50">
-        <!-- Header -->
         <header class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-2 text-brand-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                    <span class="text-xl font-bold tracking-tight">Simulador Kaizen</span>
+                <div class="flex items-center gap-2 text-brand-800 font-bold text-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    Simulador Kaizen
                 </div>
-                <!-- Botão Voltar -->
-                <button onclick="goToHome()" class="flex items-center text-sm font-medium text-slate-500 hover:text-brand-600 transition gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                    Voltar ao Início
-                </button>
+                <button onclick="goToHome()" class="text-sm font-medium text-slate-500 hover:text-brand-600 transition">Voltar ao Início</button>
             </div>
         </header>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 fade-in">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <!-- Coluna Esquerda: Inputs -->
                 <div class="lg:col-span-4 space-y-6">
                     <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-brand-500">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                            </svg>
-                            Parâmetros
-                        </h2>
+                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">Parâmetros de Simulação</h2>
                         
-                        <form id="sim-form" onsubmit="event.preventDefault(); calculate();">
+                        <form id="sim-form" onsubmit="handleSimulate(event)">
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Montante (USD)</label>
-                                <div class="relative rounded-md shadow-sm">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span class="text-slate-500 sm:text-sm">$</span>
-                                    </div>
-                                    <input type="number" id="amount" step="0.01" class="focus:ring-brand-500 focus:border-brand-500 block w-full pl-7 pr-12 sm:text-sm border-slate-300 rounded-md py-2 bg-slate-50 border" placeholder="0.00" required>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <span class="text-slate-500 sm:text-sm">USD</span>
-                                    </div>
-                                </div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Montante (USD)</label>
+                                <input type="number" id="amount" step="0.01" class="w-full pl-3 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Ex: 10000.00" required>
                             </div>
 
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-slate-600 mb-1">Taxa de Referência (Estudo)</label>
-                                <input type="number" id="refRate" step="0.0001" class="focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md py-2 bg-slate-50 border px-3" placeholder="Ex: 5.1500" required>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Taxa de Estudo (Budget)</label>
+                                <input type="number" id="refRate" step="0.0001" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Ex: 5.1500" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Data da Solicitação</label>
+                                <input type="date" id="requestDate" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" required>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4 mb-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">Dólar PTAX (Venda)</label>
-                                    <div class="relative">
-                                        <input type="number" id="currentRate" step="0.0001" class="bg-slate-100 block w-full sm:text-sm border-slate-300 rounded-md py-2 px-3 border text-slate-500 cursor-not-allowed" readonly>
-                                        <div id="loading-api" class="absolute right-2 top-2.5">
-                                            <span class="flex h-3 w-3">
-                                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                                              <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-500"></span>
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">PTAX Hoje</label>
+                                    <input type="number" id="currentRate" step="0.0001" class="bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 cursor-not-allowed" readonly>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">Spread (R$)</label>
-                                    <input type="number" id="spread" step="0.0001" value="0.03" class="focus:ring-brand-500 focus:border-brand-500 block w-full sm:text-sm border-slate-300 rounded-md py-2 bg-slate-50 border px-3">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Spread (R$)</label>
+                                    <input type="number" id="spread" step="0.0001" value="0.0300" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md">
                                 </div>
                             </div>
 
-                            <button type="submit" class="w-full bg-brand-600 text-white py-3 px-4 rounded-lg hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 font-semibold shadow transition flex justify-center items-center gap-2">
-                                <span>Simular Custo</span>
+                            <button type="submit" id="btn-calculate" class="w-full bg-brand-600 text-white py-3 rounded-lg hover:bg-brand-700 font-bold shadow-lg transition flex justify-center items-center gap-2">
+                                <span>Analisar Cenários</span>
                             </button>
                         </form>
                     </div>
 
-                    <!-- Tabela Histórico -->
-                    <div class="bg-white rounded-xl shadow-lg p-6">
-                        <div class="flex justify-between items-center mb-3 border-b pb-2">
-                            <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Últimas Cotações</h3>
-                            <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">LIVE API</span>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-slate-200 text-sm">
-                                <thead>
-                                    <tr>
-                                        <th class="px-2 py-2 text-left font-medium text-slate-500">Horário</th>
-                                        <th class="px-2 py-2 text-right font-medium text-slate-500">Valor (Venda)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="history-table-body" class="divide-y divide-slate-100">
-                                    <tr><td colspan="2" class="text-center py-4 text-slate-400">Carregando dados...</td></tr>
-                                </tbody>
-                            </table>
+                    <!-- Histórico Intraday -->
+                    <div class="bg-white rounded-xl shadow-lg p-5">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Últimos Ticks (PTAX)</h3>
+                        <div id="history-ticks" class="space-y-2 text-sm">
+                            <p class="text-slate-400 animate-pulse text-center">Carregando mercado...</p>
                         </div>
                     </div>
                 </div>
@@ -194,258 +126,314 @@
                 <!-- Coluna Direita: Resultados -->
                 <div class="lg:col-span-8 space-y-6">
                     
-                    <!-- Estado Placeholder (Antes de Simular) -->
-                    <div id="placeholder-state" class="flex flex-col items-center justify-center h-full min-h-[400px] bg-white rounded-xl border-2 border-dashed border-slate-200 p-8 text-center">
-                        <div class="bg-brand-50 p-4 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    <!-- Placeholder -->
+                    <div id="placeholder-state" class="flex flex-col items-center justify-center h-full min-h-[500px] bg-white rounded-xl border-2 border-dashed border-slate-200 p-8 text-center">
+                        <div class="bg-brand-50 p-6 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
-                        <h3 class="text-lg font-medium text-slate-800">Aguardando Simulação</h3>
-                        <p class="text-slate-500 max-w-sm mt-2">Preencha os parâmetros à esquerda para visualizar a análise financeira comparativa.</p>
+                        <h3 class="text-xl font-semibold text-slate-700">Pronto para analisar</h3>
+                        <p class="text-slate-500 max-w-sm mt-2">Informe os dados ao lado para processar o impacto financeiro desde a data da sua solicitação.</p>
                     </div>
 
-                    <!-- Área de Resultados (Oculta Inicialmente) -->
-                    <div id="results-area" class="hidden-section fade-in">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <!-- Card Estudo -->
-                            <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-slate-400">
-                                <p class="text-sm font-medium text-slate-500">Custo Estudo</p>
-                                <p class="text-2xl font-bold text-slate-700 mt-1" id="res-study-cost">R$ 0,00</p>
-                                <p class="text-xs text-slate-400 mt-1" id="res-study-rate">Taxa: 0.0000</p>
+                    <!-- Resultados Ativos -->
+                    <div id="results-area" class="hidden-section space-y-6 fade-in">
+                        
+                        <!-- Cards Principais -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-slate-300">
+                                <p class="text-xs font-bold text-slate-400 uppercase">Custo Estudo</p>
+                                <p id="card-study-total" class="text-xl font-bold text-slate-700">R$ 0,00</p>
                             </div>
-                            <!-- Card Atual -->
-                            <div class="bg-white p-6 rounded-xl shadow-md border-l-4 border-brand-500">
-                                <p class="text-sm font-medium text-slate-500">Custo Atual</p>
-                                <p class="text-2xl font-bold text-brand-700 mt-1" id="res-current-cost">R$ 0,00</p>
-                                <p class="text-xs text-slate-400 mt-1" id="res-current-rate">Taxa Ef: 0.0000</p>
+                            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-brand-500">
+                                <p class="text-xs font-bold text-slate-400 uppercase">Custo Hoje (Efetivo)</p>
+                                <p id="card-current-total" class="text-xl font-bold text-brand-600">R$ 0,00</p>
                             </div>
-                            <!-- Card Resultado -->
-                            <div id="card-result" class="bg-white p-6 rounded-xl shadow-md border-l-4 border-gray-200">
-                                <p class="text-sm font-medium text-slate-500" id="label-result">Diferença</p>
-                                <p class="text-2xl font-bold text-gray-700 mt-1" id="res-diff">R$ 0,00</p>
-                                <span id="badge-result" class="hidden mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium">--</span>
+                            <div id="card-impact" class="bg-white p-5 rounded-xl shadow border-l-4">
+                                <p id="label-impact" class="text-xs font-bold text-slate-400 uppercase">Impacto Total</p>
+                                <p id="val-impact" class="text-xl font-bold">R$ 0,00</p>
                             </div>
                         </div>
 
-                        <!-- Gráfico e Botão PDF -->
-                        <div class="bg-white rounded-xl shadow-lg p-8">
-                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                                <h3 class="text-lg font-bold text-slate-800">Comparativo Visual</h3>
-                                <button onclick="exportPDF()" class="bg-slate-800 text-white hover:bg-slate-900 px-4 py-2 rounded-lg text-sm font-medium flex items-center transition shadow-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Baixar Relatório PDF
+                        <!-- Gráfico de Histórico -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800">Timing de Fechamento</h3>
+                                    <p class="text-sm text-slate-500">Diferença financeira por dia em relação ao estudo</p>
+                                </div>
+                                <button onclick="exportPDF()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-900 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    PDF
                                 </button>
                             </div>
-
-                            <div class="space-y-6">
-                                <div>
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="font-medium text-slate-600">Referência (Estudo)</span>
-                                        <span class="font-bold text-slate-800" id="bar-label-study">R$ 0,00</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-3">
-                                        <div class="bg-slate-400 h-3 rounded-full" style="width: 100%"></div>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <div class="flex justify-between text-sm mb-1">
-                                        <span class="font-medium text-brand-600">Cenário Atual</span>
-                                        <span class="font-bold text-brand-800" id="bar-label-current">R$ 0,00</span>
-                                    </div>
-                                    <div class="w-full bg-slate-100 rounded-full h-3">
-                                        <div id="bar-current" class="bg-brand-500 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                                    </div>
-                                </div>
+                            <div class="chart-container">
+                                <canvas id="historyChart"></canvas>
                             </div>
                         </div>
-                    </div>
 
+                        <!-- Tabela de Oportunidades -->
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <div class="p-4 border-b bg-slate-50">
+                                <h3 class="text-sm font-bold text-slate-700">Simulação Retroativa Diária (Custo Efetivo)</h3>
+                            </div>
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-slate-100 text-slate-600">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left">Data</th>
+                                        <th class="px-4 py-2 text-right">PTAX Dia</th>
+                                        <th class="px-4 py-2 text-right">Custo Total</th>
+                                        <th class="px-4 py-2 text-right">Status vs Estudo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-timing-body" class="divide-y divide-slate-100 text-slate-700">
+                                    <!-- Dinâmico -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </main>
     </section>
 
-    <!-- ================= JAVASCRIPT LÓGICA ================= -->
     <script>
-        let simData = {}; // Guarda dados globais para o PDF
+        // Variáveis Globais
+        let chartInstance = null;
+        let globalData = {
+            history: [],
+            params: {}
+        };
 
-        // Funções de Navegação
+        // Formatação
+        const fmtBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+        const fmtUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
+
+        // Inicialização: Setar data padrão (7 dias atrás)
+        window.onload = () => {
+            const d = new Date();
+            d.setDate(d.getDate() - 7);
+            document.getElementById('requestDate').value = d.toISOString().split('T')[0];
+            fetchLiveRate();
+        };
+
         function goToDashboard() {
             document.getElementById('landing-section').classList.add('hidden-section');
             document.getElementById('dashboard-section').classList.remove('hidden-section');
-            // Carrega API ao entrar no dashboard
-            fetchDollarData();
-            fetchHistory();
         }
 
         function goToHome() {
-            document.getElementById('dashboard-section').classList.add('hidden-section');
-            document.getElementById('landing-section').classList.remove('hidden-section');
+            location.reload();
         }
 
-        // Formatadores
-        const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-        const formatUSD = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
-
-        // API AwesomeAPI (Dólar Atual)
-        async function fetchDollarData() {
+        async function fetchLiveRate() {
             try {
-                const response = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
-                const data = await response.json();
-                document.getElementById('currentRate').value = parseFloat(data.USDBRL.ask).toFixed(4);
-                document.getElementById('loading-api').style.display = 'none';
-            } catch (error) {
-                console.error('Erro API:', error);
-                document.getElementById('loading-api').style.display = 'none';
-            }
-        }
-
-        // API AwesomeAPI (Histórico Recente)
-        async function fetchHistory() {
-            try {
-                const response = await fetch('https://economia.awesomeapi.com.br/json/list/USD-BRL/4');
-                const data = await response.json();
-                const tbody = document.getElementById('history-table-body');
-                tbody.innerHTML = '';
+                const res = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
+                const data = await res.json();
+                const rate = parseFloat(data.USDBRL.ask);
+                document.getElementById('currentRate').value = rate.toFixed(4);
                 
-                data.forEach(item => {
-                    const dateObj = new Date(item.timestamp * 1000);
-                    const timeStr = dateObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                    tbody.innerHTML += `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="px-2 py-2 text-slate-600 text-xs border-b border-slate-50">${timeStr}</td>
-                            <td class="px-2 py-2 text-right font-mono text-slate-700 font-medium text-xs border-b border-slate-50">R$ ${parseFloat(item.ask).toFixed(4)}</td>
-                        </tr>`;
-                });
-            } catch (e) { 
-                console.error(e); 
-            }
+                // Preencher mini histórico intraday
+                const resHist = await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/5');
+                const dataHist = await resHist.json();
+                const container = document.getElementById('history-ticks');
+                container.innerHTML = dataHist.map(item => `
+                    <div class="flex justify-between border-b border-slate-50 pb-1">
+                        <span class="text-slate-500">${new Date(item.timestamp * 1000).toLocaleDateString('pt-BR')}</span>
+                        <span class="font-mono font-semibold">R$ ${parseFloat(item.bid).toFixed(4)}</span>
+                    </div>
+                `).join('');
+            } catch (e) { console.error("Erro API", e); }
         }
 
-        // Cálculo
-        function calculate() {
+        async function handleSimulate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-calculate');
+            btn.disabled = true;
+            btn.innerText = "Processando...";
+
             const amount = parseFloat(document.getElementById('amount').value);
             const refRate = parseFloat(document.getElementById('refRate').value);
-            const currentRate = parseFloat(document.getElementById('currentRate').value);
             const spread = parseFloat(document.getElementById('spread').value);
+            const requestDate = document.getElementById('requestDate').value.replace(/-/g, '');
+            const todayDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
 
-            if(!amount || !refRate || !currentRate) return alert("Preencha todos os campos!");
+            try {
+                // Busca histórico desde a data de solicitação
+                // A API aceita o range no formato ?start_date=YYYYMMDD&end_date=YYYYMMDD
+                const url = `https://economia.awesomeapi.com.br/json/daily/USD-BRL/100?start_date=${requestDate}&end_date=${todayDate}`;
+                const response = await fetch(url);
+                const historyData = await response.json();
 
-            const effectiveRate = currentRate + spread;
-            const studyCost = amount * refRate;
-            const currentCost = amount * effectiveRate;
-            const diff = studyCost - currentCost; // Se positivo = Economia (Custo atual menor que estudo)
+                if (!historyData || historyData.length === 0) throw new Error("Sem dados");
 
-            simData = { amount, refRate, currentRate, spread, effectiveRate, studyCost, currentCost, diff };
+                processData(historyData, amount, refRate, spread);
 
-            // Mostrar resultados
-            document.getElementById('placeholder-state').classList.add('hidden-section');
-            document.getElementById('results-area').classList.remove('hidden-section');
-            
-            // Preencher Cards
-            document.getElementById('res-study-cost').innerText = formatCurrency(studyCost);
-            document.getElementById('res-study-rate').innerText = `Ref: ${refRate.toFixed(4)}`;
-            
-            document.getElementById('res-current-cost').innerText = formatCurrency(currentCost);
-            document.getElementById('res-current-rate').innerText = `Efetiva: ${effectiveRate.toFixed(4)}`;
-
-            const cardRes = document.getElementById('card-result');
-            const diffEl = document.getElementById('res-diff');
-            const badgeEl = document.getElementById('badge-result');
-
-            // Lógica de Cores (Economia vs Custo Extra)
-            if (diff >= 0) {
-                // Economia
-                cardRes.className = "bg-white p-6 rounded-xl shadow-md border-l-4 border-emerald-500";
-                diffEl.className = "text-2xl font-bold text-emerald-600 mt-1";
-                diffEl.innerText = formatCurrency(diff);
-                badgeEl.innerText = "Economia";
-                badgeEl.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 mt-2 block w-max";
-            } else {
-                // Prejuízo / Custo Extra
-                cardRes.className = "bg-white p-6 rounded-xl shadow-md border-l-4 border-rose-500";
-                diffEl.className = "text-2xl font-bold text-rose-600 mt-1";
-                diffEl.innerText = formatCurrency(Math.abs(diff));
-                badgeEl.innerText = "Custo Adicional";
-                badgeEl.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 mt-2 block w-max";
+            } catch (err) {
+                alert("Erro ao buscar histórico. Tente uma data mais recente.");
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Analisar Cenários";
             }
-            badgeEl.classList.remove('hidden');
-
-            // Barras Gráficas
-            document.getElementById('bar-label-study').innerText = formatCurrency(studyCost);
-            document.getElementById('bar-label-current').innerText = formatCurrency(currentCost);
-            
-            const maxVal = Math.max(studyCost, currentCost);
-            const pct = (currentCost / maxVal) * 100;
-            const bar = document.getElementById('bar-current');
-            
-            bar.style.width = `${pct}%`;
-            bar.className = diff >= 0 
-                ? "bg-emerald-500 h-3 rounded-full transition-all duration-1000" 
-                : "bg-rose-500 h-3 rounded-full transition-all duration-1000";
         }
 
-        // PDF Generation
+        function processData(history, amount, refRate, spread) {
+            // Ordenar por data (mais antigo para mais novo)
+            history.reverse();
+
+            const studyCost = amount * refRate;
+            const currentPTAX = parseFloat(document.getElementById('currentRate').value);
+            const currentEffective = currentPTAX + spread;
+            const currentTotal = amount * currentEffective;
+            const diffActual = studyCost - currentTotal;
+
+            globalData.params = { amount, refRate, spread, studyCost, currentTotal, diffActual };
+            globalData.history = history.map(day => {
+                const ptax = parseFloat(day.bid);
+                const effective = ptax + spread;
+                const total = amount * effective;
+                return {
+                    date: new Date(day.timestamp * 1000).toLocaleDateString('pt-BR'),
+                    ptax: ptax,
+                    total: total,
+                    diff: studyCost - total // Positivo = Economia em relação ao estudo
+                };
+            });
+
+            renderUI();
+        }
+
+        function renderUI() {
+            document.getElementById('placeholder-state').classList.add('hidden-section');
+            document.getElementById('results-area').classList.remove('hidden-section');
+
+            // Atualizar Cards
+            document.getElementById('card-study-total').innerText = fmtBRL(globalData.params.studyCost);
+            document.getElementById('card-current-total').innerText = fmtBRL(globalData.params.currentTotal);
+            
+            const impactCard = document.getElementById('card-impact');
+            const impactVal = document.getElementById('val-impact');
+            const diff = globalData.params.diffActual;
+
+            impactVal.innerText = fmtBRL(Math.abs(diff));
+            if (diff >= 0) {
+                impactCard.className = "bg-white p-5 rounded-xl shadow border-l-4 border-emerald-500";
+                impactVal.className = "text-xl font-bold text-emerald-600";
+                document.getElementById('label-impact').innerText = "Economia Atual";
+            } else {
+                impactCard.className = "bg-white p-5 rounded-xl shadow border-l-4 border-rose-500";
+                impactVal.className = "text-xl font-bold text-rose-600";
+                document.getElementById('label-impact').innerText = "Excesso de Custo";
+            }
+
+            // Tabela
+            const tbody = document.getElementById('table-timing-body');
+            tbody.innerHTML = globalData.history.map(day => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="px-4 py-3 font-medium">${day.date}</td>
+                    <td class="px-4 py-3 text-right font-mono">R$ ${day.ptax.toFixed(4)}</td>
+                    <td class="px-4 py-3 text-right">${fmtBRL(day.total)}</td>
+                    <td class="px-4 py-3 text-right">
+                        <span class="px-2 py-1 rounded text-xs font-bold ${day.diff >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                            ${day.diff >= 0 ? '+' : ''} ${fmtBRL(day.diff)}
+                        </span>
+                    </td>
+                </tr>
+            `).reverse().join('');
+
+            renderChart();
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('historyChart').getContext('2d');
+            
+            if (chartInstance) chartInstance.destroy();
+
+            const labels = globalData.history.map(d => d.date);
+            const dataValues = globalData.history.map(d => d.diff);
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Resultado vs Estudo (R$)',
+                        data: dataValues,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: dataValues.map(v => v >= 0 ? '#10b981' : '#ef4444')
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: { callback: (val) => 'R$ ' + val.toLocaleString() }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
         function exportPDF() {
-            if(!simData.amount) return;
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            
-            // Header Azul
-            doc.setFillColor(30, 58, 138); // Brand 900
-            doc.rect(0, 0, 210, 40, 'F');
-            doc.setTextColor(255,255,255);
-            doc.setFontSize(22);
-            doc.setFont("helvetica", "bold");
-            doc.text("Relatório Kaizen", 14, 25);
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}`, 14, 32);
+            const p = globalData.params;
 
-            // Tabela 1: Parâmetros
+            // Header
+            doc.setFillColor(30, 58, 138);
+            doc.rect(0, 0, 210, 30, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(18); doc.text("Relatório de Timing Cambial - Kaizen", 14, 20);
+
+            // Resumo
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12); doc.setFont(undefined, 'bold');
+            doc.text("Resumo da Operação", 14, 40);
+            
             doc.autoTable({
-                startY: 50,
+                startY: 45,
                 head: [['Parâmetro', 'Valor']],
                 body: [
-                    ['Montante USD', formatUSD(simData.amount)],
-                    ['Taxa Ref. (Estudo)', `R$ ${simData.refRate.toFixed(4)}`],
-                    ['Cotação PTAX (API)', `R$ ${simData.currentRate.toFixed(4)}`],
-                    ['Spread', `R$ ${simData.spread.toFixed(4)}`],
-                    ['Taxa Final Efetiva', `R$ ${simData.effectiveRate.toFixed(4)}`],
-                ],
-                theme: 'striped',
+                    ['Montante', fmtUSD(p.amount)],
+                    ['Taxa Referência (Estudo)', `R$ ${p.refRate.toFixed(4)}`],
+                    ['Custo Previsto no Estudo', fmtBRL(p.studyCost)],
+                    ['Custo Efetivo Hoje', fmtBRL(p.currentTotal)],
+                    ['Resultado Final', fmtBRL(p.diffActual)]
+                ]
+            });
+
+            // Tabela Histórica
+            doc.setFont(undefined, 'bold');
+            doc.text("Histórico desde a Solicitação", 14, doc.lastAutoTable.finalY + 15);
+            
+            const rows = globalData.history.map(h => [
+                h.date, 
+                `R$ ${h.ptax.toFixed(4)}`, 
+                fmtBRL(h.total), 
+                fmtBRL(h.diff)
+            ]);
+
+            doc.autoTable({
+                startY: doc.lastAutoTable.finalY + 20,
+                head: [['Data', 'PTAX', 'Custo Total', 'Diferença (vs Estudo)']],
+                body: rows,
                 headStyles: { fillColor: [59, 130, 246] }
             });
 
-            // Status Final
-            const status = simData.diff >= 0 ? "ECONOMIA" : "CUSTO ADICIONAL";
-            const color = simData.diff >= 0 ? [22, 163, 74] : [220, 38, 38]; // Verde ou Vermelho
-
-            // Tabela 2: Resultados
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 15,
-                head: [['Análise Financeira', 'Resultado']],
-                body: [
-                    ['Custo Previsto (Estudo)', formatCurrency(simData.studyCost)],
-                    ['Custo Real (Atual)', formatCurrency(simData.currentCost)],
-                    ['Situação', status],
-                    ['Impacto Financeiro', formatCurrency(Math.abs(simData.diff))]
-                ],
-                theme: 'grid',
-                headStyles: { fillColor: color },
-                columnStyles: { 1: { fontStyle: 'bold' } }
-            });
-
-            // Footer
-            doc.setFontSize(8);
-            doc.setTextColor(150);
-            doc.text("Gerado por Simulador Kaizen - SaaS Importadores", 105, 280, null, null, "center");
-
-            doc.save('simulacao_kaizen.pdf');
+            doc.save(`Analise_Kaizen_${new Date().getTime()}.pdf`);
         }
     </script>
 </body>
