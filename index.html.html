@@ -4,16 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Kaizen | Business Intelligence</title>
-    
-    <!-- Fontes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Bibliotecas: PDF e Gráficos -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -32,534 +26,663 @@
     </script>
 
     <style>
-        .fade-in { animation: fadeIn 0.6s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .hidden-section { display: none !important; }
-        .chart-container { position: relative; height: 300px; width: 100%; }
+        .chart-container { position: relative; height: 220px; width: 100%; }
         .period-btn { background: #f8fafc; color: #64748b; border-color: #cbd5e1; }
         .period-btn:hover { background: #eff6ff; color: #2563eb; border-color: #93c5fd; }
         .active-period { background: #2563eb !important; color: #fff !important; border-color: #2563eb !important; }
+        .project-card { animation: fadeIn 0.4s ease-in-out; }
+        .project-row { transition: background 0.15s; }
+        .project-row:hover { background: #f8fafc; }
+        #projects-list::-webkit-scrollbar { width: 4px; }
+        #projects-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
-    <!-- ================= SEÇÃO 1: LANDING PAGE ================= -->
-    <section id="landing-section" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brand-900 to-brand-600 text-white p-6 relative overflow-hidden fade-in">
-        <div class="max-w-3xl text-center z-10">
-            <div class="mb-6 inline-block p-4 bg-white/10 rounded-full backdrop-blur-sm border border-white/20 shadow-xl">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">Simulador Kaizen</h1>
-            <p class="text-xl text-brand-100 mb-10 font-light max-w-2xl mx-auto">
-                Analise o impacto do <b>timing cambial</b>. Compare seu estudo com o histórico real de PTAX desde a solicitação.
-            </p>
-            <button onclick="goToDashboard()" class="inline-flex items-center justify-center bg-white text-brand-800 hover:bg-brand-50 px-10 py-4 rounded-full font-bold text-lg shadow-2xl transition transform hover:-translate-y-1 gap-3">
-                Acessar Simulador Pro
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-            </button>
+<!-- ================= LANDING ================= -->
+<section id="landing-section" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brand-900 to-brand-600 text-white p-6 relative overflow-hidden fade-in">
+    <div class="max-w-3xl text-center z-10">
+        <div class="mb-6 inline-block p-4 bg-white/10 rounded-full backdrop-blur-sm border border-white/20 shadow-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
         </div>
-    </section>
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight">Simulador Kaizen</h1>
+        <p class="text-xl text-brand-100 mb-10 font-light max-w-2xl mx-auto">
+            Analise o impacto do <b>timing cambial</b>. Compare múltiplos pedidos com o histórico real de PTAX.
+        </p>
+        <button onclick="goToDashboard()" class="inline-flex items-center justify-center bg-white text-brand-800 hover:bg-brand-50 px-10 py-4 rounded-full font-bold text-lg shadow-2xl transition transform hover:-translate-y-1 gap-3">
+            Acessar Simulador Pro
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+        </button>
+    </div>
+</section>
 
-    <!-- ================= SEÇÃO 2: DASHBOARD ================= -->
-    <section id="dashboard-section" class="hidden-section min-h-screen pb-10 bg-slate-50">
-        <header class="bg-white shadow-sm sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-2 text-brand-800 font-bold text-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                    Simulador Kaizen
-                </div>
+<!-- ================= DASHBOARD ================= -->
+<section id="dashboard-section" class="hidden-section min-h-screen pb-16 bg-slate-50">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 text-brand-800 font-bold text-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                Simulador Kaizen
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="exportAllPDF()" id="btn-export-all" class="hidden text-sm font-semibold text-slate-600 border border-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 items-center gap-2 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Exportar Todos (PDF)
+                </button>
                 <button onclick="goToHome()" class="text-sm font-medium text-slate-500 hover:text-brand-600 transition">Voltar ao Início</button>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                <!-- Coluna Esquerda: Inputs -->
-                <div class="lg:col-span-4 space-y-6">
-                    <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-brand-500">
-                        <h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">Parâmetros de Simulação</h2>
-                        
-                        <form id="sim-form" onsubmit="handleSimulate(event)">
-                            <div class="mb-4">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Montante (USD)</label>
-                                <input type="number" id="amount" step="0.01" class="w-full pl-3 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Ex: 10000.00" required>
-                            </div>
+    <main class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                            <div class="mb-4">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Taxa de Estudo (Budget)</label>
-                                <input type="number" id="refRate" step="0.0001" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" placeholder="Ex: 5.1500" required>
-                            </div>
+            <!-- ===== PAINEL ESQUERDO ===== -->
+            <div class="lg:col-span-3 space-y-5">
 
-                            <div class="mb-4">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Período de Análise</label>
-                                <div class="grid grid-cols-4 gap-1.5">
-                                    <button type="button" onclick="setPeriod(7)"   id="period-7"  class="period-btn active-period py-2 rounded-lg text-sm font-bold border transition">7d</button>
-                                    <button type="button" onclick="setPeriod(15)"  id="period-15" class="period-btn py-2 rounded-lg text-sm font-bold border transition">15d</button>
-                                    <button type="button" onclick="setPeriod(30)"  id="period-30" class="period-btn py-2 rounded-lg text-sm font-bold border transition">30d</button>
-                                    <button type="button" onclick="setPeriod(60)"  id="period-60" class="period-btn py-2 rounded-lg text-sm font-bold border transition">60d</button>
-                                </div>
-                            </div>
+                <!-- Configurações Globais -->
+                <div class="bg-white rounded-xl shadow-lg p-5 border-t-4 border-brand-500">
+                    <h2 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest">Configurações Globais</h2>
 
-                            <!-- Toggle fonte da taxa -->
-                            <div class="mb-4">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fonte da Taxa Atual</label>
-                                <div class="flex rounded-lg border border-slate-300 overflow-hidden text-sm font-semibold">
-                                    <button type="button" id="btn-ptax-bcb" onclick="setRateSource('bcb')"
-                                        class="flex-1 px-3 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1.5">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 10h18M5 14h14M7 18h10" /></svg>
-                                        PTAX (BCB)
-                                    </button>
-                                    <button type="button" id="btn-ptax-manual" onclick="setRateSource('manual')"
-                                        class="flex-1 px-3 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1.5">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                        Taxa Manual
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Campo taxa (BCB readonly / manual editável) -->
-                            <div class="mb-4">
-                                <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-xs font-bold text-slate-500 uppercase" id="label-rate-field">PTAX Oficial (BCB)</label>
-                                    <span id="bcb-status" class="text-xs text-slate-400 italic"></span>
-                                </div>
-                                <div class="relative">
-                                    <input type="number" id="currentRate" step="0.0001"
-                                        class="bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 cursor-not-allowed"
-                                        readonly placeholder="Buscando BCB...">
-                                    <div id="bcb-loading" class="hidden absolute right-3 top-2.5">
-                                        <svg class="animate-spin h-4 w-4 text-brand-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                                <p id="manual-hint" class="hidden text-xs text-slate-400 mt-1">Digite a taxa que você está vendo na corretora agora.</p>
-                            </div>
-
-                            <div class="mb-6">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Spread (R$)</label>
-                                <input type="number" id="spread" step="0.0001" value="0.0300" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md">
-                            </div>
-
-                            <button type="submit" id="btn-calculate" class="w-full bg-brand-600 text-white py-3 rounded-lg hover:bg-brand-700 font-bold shadow-lg transition flex justify-center items-center gap-2">
-                                <span>Analisar Cenários</span>
-                            </button>
-                        </form>
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Período de Análise</label>
+                        <div class="grid grid-cols-4 gap-1">
+                            <button type="button" onclick="setPeriod(7)"  id="period-7"  class="period-btn active-period py-2 rounded-lg text-xs font-bold border transition">7d</button>
+                            <button type="button" onclick="setPeriod(15)" id="period-15" class="period-btn py-2 rounded-lg text-xs font-bold border transition">15d</button>
+                            <button type="button" onclick="setPeriod(30)" id="period-30" class="period-btn py-2 rounded-lg text-xs font-bold border transition">30d</button>
+                            <button type="button" onclick="setPeriod(60)" id="period-60" class="period-btn py-2 rounded-lg text-xs font-bold border transition">60d</button>
+                        </div>
                     </div>
 
-                    <!-- Histórico Intraday -->
-                    <div class="bg-white rounded-xl shadow-lg p-5">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Últimos Ticks (PTAX)</h3>
-                        <div id="history-ticks" class="space-y-2 text-sm">
-                            <p class="text-slate-400 animate-pulse text-center">Carregando mercado...</p>
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fonte da Taxa Atual</label>
+                        <div class="flex rounded-lg border border-slate-300 overflow-hidden text-xs font-semibold">
+                            <button type="button" id="btn-ptax-bcb" onclick="setRateSource('bcb')"
+                                class="flex-1 px-2 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 10h18M5 14h14M7 18h10" /></svg>
+                                PTAX (BCB)
+                            </button>
+                            <button type="button" id="btn-ptax-manual" onclick="setRateSource('manual')"
+                                class="flex-1 px-2 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                Manual
+                            </button>
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-bold text-slate-500 uppercase" id="label-rate-field">PTAX Oficial (BCB)</label>
+                            <span id="bcb-status" class="text-xs text-slate-400 italic"></span>
+                        </div>
+                        <div class="relative">
+                            <input type="number" id="currentRate" step="0.0001"
+                                class="bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 text-sm cursor-not-allowed"
+                                readonly placeholder="Buscando BCB...">
+                            <div id="bcb-loading" class="hidden absolute right-3 top-2.5">
+                                <svg class="animate-spin h-4 w-4 text-brand-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p id="manual-hint" class="hidden text-xs text-slate-400 mt-1">Digite a taxa que você está vendo na corretora agora.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Spread Global (R$)</label>
+                        <input type="number" id="spread" step="0.0001" value="0.0300"
+                            class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-md">
                     </div>
                 </div>
 
-                <!-- Coluna Direita: Resultados -->
-                <div class="lg:col-span-8 space-y-6">
-                    
-                    <!-- Placeholder -->
-                    <div id="placeholder-state" class="flex flex-col items-center justify-center h-full min-h-[500px] bg-white rounded-xl border-2 border-dashed border-slate-200 p-8 text-center">
-                        <div class="bg-brand-50 p-6 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
+                <!-- Adicionar Pedido -->
+                <div class="bg-white rounded-xl shadow-lg p-5 border-t-4 border-emerald-500">
+                    <h2 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Adicionar Pedido
+                    </h2>
+                    <form onsubmit="addProject(event)">
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nº do Pedido (K)</label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-300 bg-slate-100 text-slate-500 text-sm font-bold">K</span>
+                                <input type="text" id="proj-code" class="flex-1 px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-r-md" placeholder="600" required>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-semibold text-slate-700">Pronto para analisar</h3>
-                        <p class="text-slate-500 max-w-sm mt-2">Informe os dados ao lado para processar o impacto financeiro desde a data da sua solicitação.</p>
+                        <div class="mb-3">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Montante (USD)</label>
+                            <input type="number" id="proj-amount" step="0.01" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-md" placeholder="Ex: 10000.00" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Taxa de Estudo (Budget)</label>
+                            <input type="number" id="proj-refrate" step="0.0001" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-md" placeholder="Ex: 5.1500" required>
+                        </div>
+                        <button type="submit" id="btn-add-project" class="w-full bg-emerald-600 text-white py-2.5 rounded-lg hover:bg-emerald-700 font-bold text-sm shadow transition flex justify-center items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                            Adicionar e Analisar
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lista de Pedidos -->
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Pedidos Ativos</h3>
+                        <span id="project-count" class="text-xs bg-brand-100 text-brand-700 font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
+                    <div id="projects-list" class="space-y-1.5 max-h-64 overflow-y-auto">
+                        <p class="text-slate-400 text-xs text-center py-4">Nenhum pedido adicionado</p>
+                    </div>
+                </div>
 
-                    <!-- Resultados Ativos -->
-                    <div id="results-area" class="hidden-section space-y-6 fade-in">
-                        
-                        <!-- Cards Principais -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-slate-300">
-                                <p class="text-xs font-bold text-slate-400 uppercase">Custo Estudo</p>
-                                <p id="card-study-total" class="text-xl font-bold text-slate-700">R$ 0,00</p>
-                            </div>
-                            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-brand-500">
-                                <p class="text-xs font-bold text-slate-400 uppercase">Custo Hoje (Efetivo)</p>
-                                <p id="card-current-total" class="text-xl font-bold text-brand-600">R$ 0,00</p>
-                            </div>
-                            <div id="card-impact" class="bg-white p-5 rounded-xl shadow border-l-4">
-                                <p id="label-impact" class="text-xs font-bold text-slate-400 uppercase">Impacto Total</p>
-                                <p id="val-impact" class="text-xl font-bold">R$ 0,00</p>
-                            </div>
-                        </div>
-
-                        <!-- Gráfico de Histórico -->
-                        <div class="bg-white rounded-xl shadow-lg p-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-800">Timing de Fechamento</h3>
-                                    <p class="text-sm text-slate-500">Diferença financeira por dia em relação ao estudo</p>
-                                </div>
-                                <button onclick="exportPDF()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-slate-900 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                    PDF
-                                </button>
-                            </div>
-                            <div class="chart-container">
-                                <canvas id="historyChart"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Tabela de Oportunidades -->
-                        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                            <div class="p-4 border-b bg-slate-50">
-                                <h3 class="text-sm font-bold text-slate-700">Simulação Retroativa Diária (Custo Efetivo)</h3>
-                            </div>
-                            <table class="min-w-full text-sm">
-                                <thead class="bg-slate-100 text-slate-600">
-                                    <tr>
-                                        <th class="px-4 py-2 text-left">Data</th>
-                                        <th class="px-4 py-2 text-right">PTAX Dia</th>
-                                        <th class="px-4 py-2 text-right">Custo Total</th>
-                                        <th class="px-4 py-2 text-right">Status vs Estudo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-timing-body" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Dinâmico -->
-                                </tbody>
-                            </table>
-                        </div>
-
+                <!-- Ticks PTAX -->
+                <div class="bg-white rounded-xl shadow-lg p-5">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase mb-3 tracking-widest">Últimos Ticks (PTAX)</h3>
+                    <div id="history-ticks" class="space-y-2">
+                        <p class="text-slate-400 animate-pulse text-center text-xs">Carregando...</p>
                     </div>
                 </div>
             </div>
-        </main>
-    </section>
 
-    <script>
-        // Variáveis Globais
-        let chartInstance = null;
-        let rateSource = 'bcb'; // 'bcb' ou 'manual'
-        let globalData = {
-            history: [],
-            params: {}
-        };
+            <!-- ===== ÁREA PRINCIPAL: CARDS ===== -->
+            <div class="lg:col-span-9">
 
-        // Formatação
-        const fmtBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
-        const fmtUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
-
-        // Inicialização
-        window.onload = () => {
-            setRateSource('bcb');
-        };
-
-        function goToDashboard() {
-            document.getElementById('landing-section').classList.add('hidden-section');
-            document.getElementById('dashboard-section').classList.remove('hidden-section');
-        }
-
-        function goToHome() {
-            location.reload();
-        }
-
-        // ---- Controle do Toggle de Fonte ----
-        function setRateSource(source) {
-            rateSource = source;
-            const field = document.getElementById('currentRate');
-            const btnBcb = document.getElementById('btn-ptax-bcb');
-            const btnManual = document.getElementById('btn-ptax-manual');
-            const labelField = document.getElementById('label-rate-field');
-            const manualHint = document.getElementById('manual-hint');
-
-            if (source === 'bcb') {
-                btnBcb.className = 'flex-1 px-3 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1.5';
-                btnManual.className = 'flex-1 px-3 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1.5';
-                field.readOnly = true;
-                field.className = 'bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 cursor-not-allowed';
-                field.placeholder = 'Buscando BCB...';
-                labelField.innerText = 'PTAX Oficial (BCB)';
-                manualHint.classList.add('hidden');
-                fetchBCBRate();
-            } else {
-                btnManual.className = 'flex-1 px-3 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1.5';
-                btnBcb.className = 'flex-1 px-3 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1.5';
-                field.readOnly = false;
-                field.className = 'w-full px-3 py-2 bg-slate-50 border border-brand-400 rounded-md focus:ring-brand-500 focus:border-brand-500 text-slate-800';
-                field.placeholder = 'Ex: 5.8200';
-                field.value = '';
-                labelField.innerText = 'Taxa da Corretora (Manual)';
-                manualHint.classList.remove('hidden');
-                document.getElementById('bcb-status').innerText = '';
-                field.focus();
-            }
-        }
-
-        // ---- Busca PTAX oficial no Banco Central do Brasil ----
-        async function fetchBCBRate() {
-            const statusEl = document.getElementById('bcb-status');
-            const loadingEl = document.getElementById('bcb-loading');
-            const field = document.getElementById('currentRate');
-
-            loadingEl.classList.remove('hidden');
-            statusEl.innerText = 'Consultando BCB...';
-            field.value = '';
-
-            // Tenta os últimos 5 dias úteis (fins de semana/feriados não têm PTAX)
-            const today = new Date();
-            for (let i = 0; i <= 5; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() - i);
-                const mm = String(d.getMonth() + 1).padStart(2, '0');
-                const dd = String(d.getDate()).padStart(2, '0');
-                const yyyy = d.getFullYear();
-                const dateStr = `${mm}-${dd}-${yyyy}`; // formato BCB: MM-DD-YYYY
-                const ptBR = `${dd}/${mm}/${yyyy}`;
-
-                try {
-                    const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${dateStr}%27&$top=1&$format=json&$select=cotacaoVenda`;
-                    const res = await fetch(url);
-                    const json = await res.json();
-
-                    if (json.value && json.value.length > 0) {
-                        const rate = json.value[0].cotacaoVenda;
-                        field.value = rate.toFixed(4);
-                        statusEl.innerText = `PTAX de ${ptBR}`;
-                        loadingEl.classList.add('hidden');
-                        fetchHistoryTicks(); // também atualiza os ticks laterais
-                        return;
-                    }
-                } catch (err) {
-                    // tenta próximo dia
-                }
-            }
-
-            // fallback: se BCB falhar, avisa o usuário
-            loadingEl.classList.add('hidden');
-            statusEl.innerText = '⚠ BCB indisponível';
-            field.placeholder = 'Não disponível';
-        }
-
-        // ---- Mini histórico lateral (AwesomeAPI - 5 dias) ----
-        async function fetchHistoryTicks() {
-            try {
-                const resHist = await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/5');
-                const dataHist = await resHist.json();
-                const container = document.getElementById('history-ticks');
-                container.innerHTML = dataHist.map(item => `
-                    <div class="flex justify-between border-b border-slate-50 pb-1">
-                        <span class="text-slate-500">${new Date(item.timestamp * 1000).toLocaleDateString('pt-BR')}</span>
-                        <span class="font-mono font-semibold">R$ ${parseFloat(item.bid).toFixed(4)}</span>
+                <!-- Placeholder -->
+                <div id="placeholder-state" class="flex flex-col items-center justify-center min-h-[500px] bg-white rounded-xl border-2 border-dashed border-slate-200 p-8 text-center">
+                    <div class="bg-brand-50 p-6 rounded-full mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
                     </div>
-                `).join('');
-            } catch (e) { console.error("Erro ao buscar ticks", e); }
+                    <h3 class="text-xl font-semibold text-slate-700">Adicione um pedido para começar</h3>
+                    <p class="text-slate-500 max-w-sm mt-2">Use o formulário ao lado para adicionar um ou mais pedidos. Cada um será analisado em seu próprio card.</p>
+                </div>
+
+                <!-- Grid de Cards -->
+                <div id="projects-grid" class="hidden-section">
+
+                    <!-- Totalizador (aparece com 2+ pedidos) -->
+                    <div id="summary-bar" class="hidden-section mb-6 bg-white rounded-xl shadow p-4 border-l-4 border-brand-500 flex flex-wrap gap-6 items-center">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Total Estudo</p>
+                            <p id="sum-study" class="text-lg font-bold text-slate-700">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase">Total Efetivo</p>
+                            <p id="sum-current" class="text-lg font-bold text-brand-600">R$ 0,00</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase" id="sum-impact-label">Impacto Consolidado</p>
+                            <p id="sum-impact" class="text-lg font-bold">R$ 0,00</p>
+                        </div>
+                        <div class="ml-auto text-right">
+                            <p class="text-xs text-slate-400"><span id="sum-count">0</span> pedidos</p>
+                        </div>
+                    </div>
+
+                    <div id="cards-container" class="grid grid-cols-1 xl:grid-cols-2 gap-6"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+
+<script>
+    let rateSource = 'bcb';
+    let selectedPeriod = 7;
+    let projects = [];
+    let chartInstances = {};
+
+    const fmtBRL = v => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+    const fmtUSD = v => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
+
+    window.onload = () => setRateSource('bcb');
+
+    function goToDashboard() {
+        document.getElementById('landing-section').classList.add('hidden-section');
+        document.getElementById('dashboard-section').classList.remove('hidden-section');
+    }
+    function goToHome() { location.reload(); }
+
+    // ---- PERÍODO ----
+    function setPeriod(days) {
+        selectedPeriod = days;
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active-period'));
+        document.getElementById('period-' + days).classList.add('active-period');
+        if (projects.length > 0) reprocessAll();
+    }
+
+    // ---- FONTE DA TAXA ----
+    function setRateSource(source) {
+        rateSource = source;
+        const field = document.getElementById('currentRate');
+        const btnBcb = document.getElementById('btn-ptax-bcb');
+        const btnManual = document.getElementById('btn-ptax-manual');
+        const baseClass = 'flex-1 px-2 py-2 transition flex items-center justify-center gap-1 text-xs font-semibold';
+
+        if (source === 'bcb') {
+            btnBcb.className = baseClass + ' bg-brand-600 text-white';
+            btnManual.className = baseClass + ' bg-white text-slate-500 hover:bg-slate-50';
+            field.readOnly = true;
+            field.className = 'bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 text-sm cursor-not-allowed';
+            field.placeholder = 'Buscando BCB...';
+            document.getElementById('label-rate-field').innerText = 'PTAX Oficial (BCB)';
+            document.getElementById('manual-hint').classList.add('hidden');
+            fetchBCBRate();
+        } else {
+            btnManual.className = baseClass + ' bg-brand-600 text-white';
+            btnBcb.className = baseClass + ' bg-white text-slate-500 hover:bg-slate-50';
+            field.readOnly = false;
+            field.className = 'w-full px-3 py-2 text-sm bg-slate-50 border border-brand-400 rounded-md text-slate-800';
+            field.placeholder = 'Ex: 5.8200';
+            field.value = '';
+            document.getElementById('label-rate-field').innerText = 'Taxa da Corretora (Manual)';
+            document.getElementById('manual-hint').classList.remove('hidden');
+            document.getElementById('bcb-status').innerText = '';
+            field.focus();
         }
+    }
 
-        let selectedPeriod = 7;
-
-        function setPeriod(days) {
-            selectedPeriod = days;
-            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active-period'));
-            document.getElementById(`period-${days}`).classList.add('active-period');
-        }
-
-        async function handleSimulate(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btn-calculate');
-            btn.disabled = true;
-            btn.innerText = "Processando...";
-
-            const amount = parseFloat(document.getElementById('amount').value);
-            const refRate = parseFloat(document.getElementById('refRate').value);
-            const spread = parseFloat(document.getElementById('spread').value);
-
-            // Calcula datas com base no período selecionado
-            const today = new Date();
-            const startDate = new Date(today);
-            startDate.setDate(today.getDate() - selectedPeriod);
-            const todayStr = today.toISOString().split('T')[0].replace(/-/g, '');
-            const startStr = startDate.toISOString().split('T')[0].replace(/-/g, '');
-
+    // ---- BCB ----
+    async function fetchBCBRate() {
+        const statusEl = document.getElementById('bcb-status');
+        const loadingEl = document.getElementById('bcb-loading');
+        const field = document.getElementById('currentRate');
+        loadingEl.classList.remove('hidden');
+        statusEl.innerText = 'Consultando BCB...';
+        field.value = '';
+        const today = new Date();
+        for (let i = 0; i <= 5; i++) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - i);
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const yyyy = d.getFullYear();
             try {
-                const url = `https://economia.awesomeapi.com.br/json/daily/USD-BRL/${selectedPeriod + 10}?start_date=${startStr}&end_date=${todayStr}`;
-                const response = await fetch(url);
-                const historyData = await response.json();
-
-                if (!historyData || historyData.length === 0) throw new Error("Sem dados");
-
-                processData(historyData, amount, refRate, spread);
-
-            } catch (err) {
-                alert("Erro ao buscar histórico. Tente novamente.");
-                console.error(err);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Analisar Cenários";
-            }
-        }
-
-        function processData(history, amount, refRate, spread) {
-            // Ordenar por data (mais antigo para mais novo)
-            history.reverse();
-
-            const studyCost = amount * refRate;
-            const currentPTAX = parseFloat(document.getElementById('currentRate').value);
-            const currentEffective = currentPTAX + spread;
-            const currentTotal = amount * currentEffective;
-            const diffActual = studyCost - currentTotal;
-            const rateSourceLabel = rateSource === 'bcb'
-                ? 'PTAX Oficial BCB'
-                : 'Taxa Manual (Corretora)';
-
-            globalData.params = { amount, refRate, spread, studyCost, currentTotal, diffActual, currentPTAX, rateSourceLabel, period: selectedPeriod };
-            globalData.history = history.map(day => {
-                const ptax = parseFloat(day.bid);
-                const effective = ptax + spread;
-                const total = amount * effective;
-                return {
-                    date: new Date(day.timestamp * 1000).toLocaleDateString('pt-BR'),
-                    ptax: ptax,
-                    total: total,
-                    diff: studyCost - total // Positivo = Economia em relação ao estudo
-                };
-            });
-
-            renderUI();
-        }
-
-        function renderUI() {
-            document.getElementById('placeholder-state').classList.add('hidden-section');
-            document.getElementById('results-area').classList.remove('hidden-section');
-
-            // Atualizar Cards
-            document.getElementById('card-study-total').innerText = fmtBRL(globalData.params.studyCost);
-            document.getElementById('card-current-total').innerText = fmtBRL(globalData.params.currentTotal);
-            
-            const impactCard = document.getElementById('card-impact');
-            const impactVal = document.getElementById('val-impact');
-            const diff = globalData.params.diffActual;
-
-            impactVal.innerText = fmtBRL(Math.abs(diff));
-            if (diff >= 0) {
-                impactCard.className = "bg-white p-5 rounded-xl shadow border-l-4 border-emerald-500";
-                impactVal.className = "text-xl font-bold text-emerald-600";
-                document.getElementById('label-impact').innerText = "Economia Atual";
-            } else {
-                impactCard.className = "bg-white p-5 rounded-xl shadow border-l-4 border-rose-500";
-                impactVal.className = "text-xl font-bold text-rose-600";
-                document.getElementById('label-impact').innerText = "Excesso de Custo";
-            }
-
-            // Tabela
-            const tbody = document.getElementById('table-timing-body');
-            tbody.innerHTML = globalData.history.map(day => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="px-4 py-3 font-medium">${day.date}</td>
-                    <td class="px-4 py-3 text-right font-mono">R$ ${day.ptax.toFixed(4)}</td>
-                    <td class="px-4 py-3 text-right">${fmtBRL(day.total)}</td>
-                    <td class="px-4 py-3 text-right">
-                        <span class="px-2 py-1 rounded text-xs font-bold ${day.diff >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
-                            ${day.diff >= 0 ? '+' : ''} ${fmtBRL(day.diff)}
-                        </span>
-                    </td>
-                </tr>
-            `).reverse().join('');
-
-            renderChart();
-        }
-
-        function renderChart() {
-            const ctx = document.getElementById('historyChart').getContext('2d');
-            
-            if (chartInstance) chartInstance.destroy();
-
-            const labels = globalData.history.map(d => d.date);
-            const dataValues = globalData.history.map(d => d.diff);
-
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Resultado vs Estudo (R$)',
-                        data: dataValues,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointBackgroundColor: dataValues.map(v => v >= 0 ? '#10b981' : '#ef4444')
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            grid: { color: '#f1f5f9' },
-                            ticks: { callback: (val) => 'R$ ' + val.toLocaleString() }
-                        },
-                        x: { grid: { display: false } }
-                    }
+                const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${mm}-${dd}-${yyyy}%27&$top=1&$format=json&$select=cotacaoVenda`;
+                const res = await fetch(url);
+                const json = await res.json();
+                if (json.value && json.value.length > 0) {
+                    field.value = json.value[0].cotacaoVenda.toFixed(4);
+                    statusEl.innerText = `PTAX de ${dd}/${mm}/${yyyy}`;
+                    loadingEl.classList.add('hidden');
+                    fetchHistoryTicks();
+                    return;
                 }
-            });
+            } catch (_) {}
         }
+        loadingEl.classList.add('hidden');
+        statusEl.innerText = 'BCB indisponivel';
+        field.placeholder = 'Nao disponivel';
+    }
 
-        function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const p = globalData.params;
+    async function fetchHistoryTicks() {
+        try {
+            const res = await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/5');
+            const data = await res.json();
+            document.getElementById('history-ticks').innerHTML = data.map(item => `
+                <div class="flex justify-between border-b border-slate-50 pb-1">
+                    <span class="text-slate-500 text-xs">${new Date(item.timestamp * 1000).toLocaleDateString('pt-BR')}</span>
+                    <span class="font-mono font-semibold text-xs">R$ ${parseFloat(item.bid).toFixed(4)}</span>
+                </div>
+            `).join('');
+        } catch (_) {}
+    }
 
-            // Header
-            doc.setFillColor(30, 58, 138);
-            doc.rect(0, 0, 210, 30, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(18); doc.text("Relatório de Timing Cambial - Kaizen", 14, 20);
+    // ---- FETCH HISTÓRICO PTAX ----
+    async function fetchHistory() {
+        const today = new Date();
+        const startDate = new Date(today);
+        startDate.setDate(today.getDate() - selectedPeriod);
+        const todayStr = today.toISOString().split('T')[0].replace(/-/g, '');
+        const startStr = startDate.toISOString().split('T')[0].replace(/-/g, '');
+        const url = `https://economia.awesomeapi.com.br/json/daily/USD-BRL/${selectedPeriod + 10}?start_date=${startStr}&end_date=${todayStr}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data || data.length === 0) throw new Error('Sem dados');
+        return [...data].reverse();
+    }
 
-            // Resumo
+    // ---- CALCULAR PARÂMETROS ----
+    function calcParams(history, amount, refRate, spread, currentRate) {
+        const studyCost = amount * refRate;
+        const currentTotal = amount * (currentRate + spread);
+        const diffActual = studyCost - currentTotal;
+        const rateSourceLabel = rateSource === 'bcb' ? 'PTAX Oficial BCB' : 'Taxa Manual (Corretora)';
+        const dailyHistory = history.map(day => {
+            const ptax = parseFloat(day.bid);
+            const total = amount * (ptax + spread);
+            return { date: new Date(day.timestamp * 1000).toLocaleDateString('pt-BR'), ptax, total, diff: studyCost - total };
+        });
+        return { amount, refRate, spread, studyCost, currentTotal, diffActual, currentRate, rateSourceLabel, period: selectedPeriod, dailyHistory };
+    }
+
+    // ---- ADICIONAR PROJETO ----
+    async function addProject(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-add-project');
+        btn.disabled = true;
+        btn.innerHTML = `<svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg> Analisando...`;
+
+        const code = 'K' + document.getElementById('proj-code').value.trim();
+        const amount = parseFloat(document.getElementById('proj-amount').value);
+        const refRate = parseFloat(document.getElementById('proj-refrate').value);
+        const currentRate = parseFloat(document.getElementById('currentRate').value);
+        const spread = parseFloat(document.getElementById('spread').value);
+
+        const resetBtn = () => {
+            btn.disabled = false;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg> Adicionar e Analisar`;
+        };
+
+        if (isNaN(currentRate)) { alert('Aguarde a PTAX carregar ou informe a taxa manualmente.'); resetBtn(); return; }
+        if (projects.find(p => p.code === code)) { alert(`Pedido ${code} ja foi adicionado.`); resetBtn(); return; }
+
+        try {
+            const history = await fetchHistory();
+            const id = Date.now();
+            const params = calcParams(history, amount, refRate, spread, currentRate);
+            projects.push({ id, code, amount, refRate, spread, currentRate, history, params });
+            renderProjectsList();
+            renderAllCards();
+            updateSummary();
+            document.getElementById('proj-code').value = '';
+            document.getElementById('proj-amount').value = '';
+            document.getElementById('proj-refrate').value = '';
+        } catch (err) {
+            alert('Erro ao buscar historico. Tente novamente.');
+        } finally {
+            resetBtn();
+        }
+    }
+
+    // ---- REPROCESSAR TODOS ----
+    async function reprocessAll() {
+        try {
+            const history = await fetchHistory();
+            const currentRate = parseFloat(document.getElementById('currentRate').value);
+            const spread = parseFloat(document.getElementById('spread').value);
+            projects = projects.map(p => {
+                const params = calcParams(history, p.amount, p.refRate, isNaN(currentRate) ? p.currentRate : currentRate, isNaN(spread) ? p.spread : spread);
+                return { ...p, history, params };
+            });
+            renderAllCards();
+            updateSummary();
+        } catch (_) {}
+    }
+
+    // ---- REMOVER ----
+    function removeProject(id) {
+        projects = projects.filter(p => p.id !== id);
+        if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+        renderProjectsList();
+        renderAllCards();
+        updateSummary();
+    }
+
+    // ---- LISTA LATERAL ----
+    function renderProjectsList() {
+        const list = document.getElementById('projects-list');
+        document.getElementById('project-count').innerText = projects.length;
+        if (projects.length === 0) {
+            list.innerHTML = '<p class="text-slate-400 text-xs text-center py-4">Nenhum pedido adicionado</p>';
+            return;
+        }
+        list.innerHTML = projects.map(p => {
+            const diff = p.params.diffActual;
+            const color = diff >= 0 ? 'text-emerald-600' : 'text-rose-500';
+            return `
+            <div class="project-row flex items-center justify-between px-2 py-1.5 rounded-lg">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-white bg-brand-500 px-2 py-0.5 rounded">${p.code}</span>
+                    <span class="text-xs text-slate-500">${fmtUSD(p.amount)}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold ${color}">${diff >= 0 ? '+' : ''}${fmtBRL(diff)}</span>
+                    <button onclick="removeProject(${p.id})" class="text-slate-300 hover:text-rose-500 transition" title="Remover">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ---- CARDS ----
+    function renderAllCards() {
+        const placeholder = document.getElementById('placeholder-state');
+        const grid = document.getElementById('projects-grid');
+        const exportBtn = document.getElementById('btn-export-all');
+
+        if (projects.length === 0) {
+            placeholder.classList.remove('hidden-section');
+            grid.classList.add('hidden-section');
+            exportBtn.classList.add('hidden');
+            return;
+        }
+        placeholder.classList.add('hidden-section');
+        grid.classList.remove('hidden-section');
+        exportBtn.classList.remove('hidden');
+        exportBtn.style.display = 'inline-flex';
+
+        document.getElementById('cards-container').innerHTML = projects.map(p => buildCardHTML(p)).join('');
+        projects.forEach(p => renderChart(p));
+    }
+
+    function buildCardHTML(p) {
+        const diff = p.params.diffActual;
+        const pos = diff >= 0;
+        const borderColor = pos ? 'border-emerald-500' : 'border-rose-500';
+        const impactColor = pos ? 'text-emerald-600' : 'text-rose-500';
+        const impactBg = pos ? 'bg-emerald-50' : 'bg-rose-50';
+        const impactLabel = pos ? 'Economia Atual' : 'Excesso de Custo';
+        const impactTextColor = pos ? '#065f46' : '#9f1239';
+
+        const tableRows = [...p.params.dailyHistory].reverse().map(day => `
+            <tr class="hover:bg-slate-50">
+                <td class="px-3 py-2 text-xs">${day.date}</td>
+                <td class="px-3 py-2 text-xs text-right font-mono">R$ ${day.ptax.toFixed(4)}</td>
+                <td class="px-3 py-2 text-xs text-right">${fmtBRL(day.total)}</td>
+                <td class="px-3 py-2 text-xs text-right">
+                    <span class="px-1.5 py-0.5 rounded text-xs font-bold ${day.diff >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                        ${day.diff >= 0 ? '+' : ''}${fmtBRL(day.diff)}
+                    </span>
+                </td>
+            </tr>`).join('');
+
+        return `
+        <div class="project-card bg-white rounded-xl shadow-lg overflow-hidden border-t-4 ${borderColor}">
+            <div class="px-5 pt-4 pb-3 flex justify-between items-start border-b border-slate-100">
+                <div>
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-lg font-bold text-slate-800">${p.code}</span>
+                        <span class="text-xs text-slate-400 font-medium">${fmtUSD(p.amount)} &middot; ${selectedPeriod}d</span>
+                    </div>
+                    <p class="text-xs text-slate-400">Estudo: R$ ${p.refRate.toFixed(4)} &middot; Spread: R$ ${p.params.spread.toFixed(4)}</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportProjectPDF(${p.id})" class="text-xs text-slate-500 border border-slate-200 px-2 py-1 rounded hover:bg-slate-50 transition flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        PDF
+                    </button>
+                    <button onclick="removeProject(${p.id})" class="text-xs text-rose-400 border border-rose-100 px-2 py-1 rounded hover:bg-rose-50 transition flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        Remover
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100">
+                <div class="px-4 py-3">
+                    <p class="text-xs text-slate-400 font-bold uppercase">Custo Estudo</p>
+                    <p class="text-sm font-bold text-slate-700">${fmtBRL(p.params.studyCost)}</p>
+                </div>
+                <div class="px-4 py-3">
+                    <p class="text-xs text-slate-400 font-bold uppercase">Custo Hoje</p>
+                    <p class="text-sm font-bold text-brand-600">${fmtBRL(p.params.currentTotal)}</p>
+                </div>
+                <div class="px-4 py-3 ${impactBg}">
+                    <p class="text-xs font-bold uppercase" style="color:${impactTextColor}">${impactLabel}</p>
+                    <p class="text-sm font-bold ${impactColor}">${diff >= 0 ? '+' : ''}${fmtBRL(Math.abs(diff))}</p>
+                </div>
+            </div>
+
+            <div class="px-4 pt-3 pb-1">
+                <p class="text-xs font-bold text-slate-400 uppercase mb-2">Resultado vs Estudo por dia</p>
+                <div class="chart-container">
+                    <canvas id="chart-${p.id}"></canvas>
+                </div>
+            </div>
+
+            <details class="group">
+                <summary class="px-4 py-2 text-xs font-bold text-slate-400 cursor-pointer hover:text-brand-600 flex items-center gap-1 select-none border-t border-slate-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    Ver historico diario
+                </summary>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-t border-slate-100">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs">Data</th>
+                                <th class="px-3 py-2 text-right text-xs">PTAX</th>
+                                <th class="px-3 py-2 text-right text-xs">Custo Total</th>
+                                <th class="px-3 py-2 text-right text-xs">vs Estudo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">${tableRows}</tbody>
+                    </table>
+                </div>
+            </details>
+        </div>`;
+    }
+
+    function renderChart(p) {
+        const canvas = document.getElementById('chart-' + p.id);
+        if (!canvas) return;
+        if (chartInstances[p.id]) chartInstances[p.id].destroy();
+        const labels = p.params.dailyHistory.map(d => d.date);
+        const values = p.params.dailyHistory.map(d => d.diff);
+        chartInstances[p.id] = new Chart(canvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'vs Estudo (R$)',
+                    data: values,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59,130,246,0.07)',
+                    fill: true, tension: 0.4, pointRadius: 4,
+                    pointBackgroundColor: values.map(v => v >= 0 ? '#10b981' : '#ef4444')
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: '#f1f5f9' }, ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR'), font: { size: 10 } } },
+                    x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    // ---- TOTALIZADOR ----
+    function updateSummary() {
+        const bar = document.getElementById('summary-bar');
+        if (projects.length < 2) { bar.classList.add('hidden-section'); return; }
+        bar.classList.remove('hidden-section');
+        const totalStudy   = projects.reduce((s, p) => s + p.params.studyCost, 0);
+        const totalCurrent = projects.reduce((s, p) => s + p.params.currentTotal, 0);
+        const totalDiff    = projects.reduce((s, p) => s + p.params.diffActual, 0);
+        document.getElementById('sum-study').innerText = fmtBRL(totalStudy);
+        document.getElementById('sum-current').innerText = fmtBRL(totalCurrent);
+        document.getElementById('sum-count').innerText = projects.length;
+        const impactEl = document.getElementById('sum-impact');
+        impactEl.innerText = (totalDiff >= 0 ? '+' : '') + fmtBRL(totalDiff);
+        impactEl.className = 'text-lg font-bold ' + (totalDiff >= 0 ? 'text-emerald-600' : 'text-rose-500');
+        document.getElementById('sum-impact-label').innerText = totalDiff >= 0 ? 'Economia Consolidada' : 'Excesso Consolidado';
+    }
+
+    // ---- PDF INDIVIDUAL ----
+    function exportProjectPDF(id) {
+        const p = projects.find(pr => pr.id === id);
+        if (!p) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFillColor(30, 58, 138); doc.rect(0, 0, 210, 28, 'F');
+        doc.setTextColor(255, 255, 255); doc.setFontSize(15);
+        doc.text('Relatorio Timing Cambial - ' + p.code, 14, 18);
+        doc.setTextColor(0, 0, 0); doc.setFontSize(11); doc.setFont(undefined, 'bold');
+        doc.text('Resumo da Operacao', 14, 38);
+        doc.autoTable({ startY: 43, head: [['Parametro', 'Valor']], body: [
+            ['Pedido', p.code], ['Montante', fmtUSD(p.amount)],
+            ['Periodo Analisado', 'Ultimos ' + selectedPeriod + ' dias'],
+            ['Taxa de Estudo', 'R$ ' + p.refRate.toFixed(4)],
+            ['Taxa Atual', 'R$ ' + p.params.currentRate.toFixed(4) + ' (' + p.params.rateSourceLabel + ')'],
+            ['Spread', 'R$ ' + p.params.spread.toFixed(4)],
+            ['Custo Previsto', fmtBRL(p.params.studyCost)],
+            ['Custo Efetivo Hoje', fmtBRL(p.params.currentTotal)],
+            ['Resultado Final', fmtBRL(p.params.diffActual)]
+        ]});
+        doc.setFont(undefined, 'bold');
+        doc.text('Historico Diario', 14, doc.lastAutoTable.finalY + 12);
+        doc.autoTable({ startY: doc.lastAutoTable.finalY + 17,
+            head: [['Data', 'PTAX', 'Custo Total', 'vs Estudo']],
+            body: [...p.params.dailyHistory].reverse().map(h => [h.date, 'R$ ' + h.ptax.toFixed(4), fmtBRL(h.total), fmtBRL(h.diff)]),
+            headStyles: { fillColor: [59, 130, 246] }
+        });
+        doc.save('Kaizen_' + p.code + '_' + Date.now() + '.pdf');
+    }
+
+    // ---- PDF CONSOLIDADO ----
+    function exportAllPDF() {
+        if (projects.length === 0) return;
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFillColor(30, 58, 138); doc.rect(0, 0, 210, 28, 'F');
+        doc.setTextColor(255, 255, 255); doc.setFontSize(14);
+        doc.text('Relatorio Consolidado - Kaizen Timing Cambial', 14, 18);
+        const totalStudy   = projects.reduce((s, p) => s + p.params.studyCost, 0);
+        const totalCurrent = projects.reduce((s, p) => s + p.params.currentTotal, 0);
+        const totalDiff    = projects.reduce((s, p) => s + p.params.diffActual, 0);
+        doc.setTextColor(0, 0, 0); doc.setFontSize(11); doc.setFont(undefined, 'bold');
+        doc.text('Resumo Consolidado', 14, 38);
+        doc.autoTable({ startY: 43, showHead: false, body: [
+            ['Total de Pedidos', projects.length],
+            ['Periodo Analisado', 'Ultimos ' + selectedPeriod + ' dias'],
+            ['Total Previsto (Estudo)', fmtBRL(totalStudy)],
+            ['Total Efetivo (Hoje)', fmtBRL(totalCurrent)],
+            ['Resultado Consolidado', fmtBRL(totalDiff)]
+        ]});
+        doc.setFont(undefined, 'bold');
+        doc.text('Visao por Pedido', 14, doc.lastAutoTable.finalY + 12);
+        doc.autoTable({ startY: doc.lastAutoTable.finalY + 17,
+            head: [['Pedido', 'Montante (USD)', 'Taxa Estudo', 'Custo Estudo', 'Custo Hoje', 'Resultado']],
+            body: projects.map(p => [p.code, fmtUSD(p.amount), 'R$ ' + p.refRate.toFixed(4), fmtBRL(p.params.studyCost), fmtBRL(p.params.currentTotal), fmtBRL(p.params.diffActual)]),
+            headStyles: { fillColor: [59, 130, 246] }, styles: { fontSize: 9 }
+        });
+        projects.forEach(p => {
+            doc.addPage();
+            doc.setFillColor(30, 58, 138); doc.rect(0, 0, 210, 20, 'F');
+            doc.setTextColor(255, 255, 255); doc.setFontSize(13);
+            doc.text('Detalhe: ' + p.code, 14, 13);
             doc.setTextColor(0, 0, 0);
-            doc.setFontSize(12); doc.setFont(undefined, 'bold');
-            doc.text("Resumo da Operação", 14, 40);
-            
-            doc.autoTable({
-                startY: 45,
-                head: [['Parâmetro', 'Valor']],
-                body: [
-                    ['Montante', fmtUSD(p.amount)],
-                    ['Período Analisado', `Últimos ${p.period} dias`],
-                    ['Taxa Referência (Estudo)', `R$ ${p.refRate.toFixed(4)}`],
-                    ['Taxa Atual Utilizada', `R$ ${p.currentPTAX.toFixed(4)} (${p.rateSourceLabel})`],
-                    ['Custo Previsto no Estudo', fmtBRL(p.studyCost)],
-                    ['Custo Efetivo Hoje', fmtBRL(p.currentTotal)],
-                    ['Resultado Final', fmtBRL(p.diffActual)]
-                ]
+            doc.autoTable({ startY: 25,
+                head: [['Data', 'PTAX', 'Custo Total', 'vs Estudo']],
+                body: [...p.params.dailyHistory].reverse().map(h => [h.date, 'R$ ' + h.ptax.toFixed(4), fmtBRL(h.total), fmtBRL(h.diff)]),
+                headStyles: { fillColor: [59, 130, 246] }, styles: { fontSize: 9 }
             });
-
-            // Tabela Histórica
-            doc.setFont(undefined, 'bold');
-            doc.text("Histórico desde a Solicitação", 14, doc.lastAutoTable.finalY + 15);
-            
-            const rows = globalData.history.map(h => [
-                h.date, 
-                `R$ ${h.ptax.toFixed(4)}`, 
-                fmtBRL(h.total), 
-                fmtBRL(h.diff)
-            ]);
-
-            doc.autoTable({
-                startY: doc.lastAutoTable.finalY + 20,
-                head: [['Data', 'PTAX', 'Custo Total', 'Diferença (vs Estudo)']],
-                body: rows,
-                headStyles: { fillColor: [59, 130, 246] }
-            });
-
-            doc.save(`Analise_Kaizen_${new Date().getTime()}.pdf`);
-        }
-    </script>
+        });
+        doc.save('Kaizen_Consolidado_' + Date.now() + '.pdf');
+    }
+</script>
 </body>
 </html>
