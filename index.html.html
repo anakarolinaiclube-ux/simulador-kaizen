@@ -36,6 +36,9 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hidden-section { display: none !important; }
         .chart-container { position: relative; height: 300px; width: 100%; }
+        .period-btn { background: #f8fafc; color: #64748b; border-color: #cbd5e1; }
+        .period-btn:hover { background: #eff6ff; color: #2563eb; border-color: #93c5fd; }
+        .active-period { background: #2563eb !important; color: #fff !important; border-color: #2563eb !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
@@ -93,8 +96,13 @@
                             </div>
 
                             <div class="mb-4">
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Data da Solicitação</label>
-                                <input type="date" id="requestDate" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" required>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Período de Análise</label>
+                                <div class="grid grid-cols-4 gap-1.5">
+                                    <button type="button" onclick="setPeriod(7)"   id="period-7"  class="period-btn active-period py-2 rounded-lg text-sm font-bold border transition">7d</button>
+                                    <button type="button" onclick="setPeriod(15)"  id="period-15" class="period-btn py-2 rounded-lg text-sm font-bold border transition">15d</button>
+                                    <button type="button" onclick="setPeriod(30)"  id="period-30" class="period-btn py-2 rounded-lg text-sm font-bold border transition">30d</button>
+                                    <button type="button" onclick="setPeriod(60)"  id="period-60" class="period-btn py-2 rounded-lg text-sm font-bold border transition">60d</button>
+                                </div>
                             </div>
 
                             <!-- Toggle fonte da taxa -->
@@ -245,9 +253,6 @@
 
         // Inicialização
         window.onload = () => {
-            const d = new Date();
-            d.setDate(d.getDate() - 7);
-            document.getElementById('requestDate').value = d.toISOString().split('T')[0];
             setRateSource('bcb');
         };
 
@@ -352,6 +357,14 @@
             } catch (e) { console.error("Erro ao buscar ticks", e); }
         }
 
+        let selectedPeriod = 7;
+
+        function setPeriod(days) {
+            selectedPeriod = days;
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active-period'));
+            document.getElementById(`period-${days}`).classList.add('active-period');
+        }
+
         async function handleSimulate(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-calculate');
@@ -361,13 +374,16 @@
             const amount = parseFloat(document.getElementById('amount').value);
             const refRate = parseFloat(document.getElementById('refRate').value);
             const spread = parseFloat(document.getElementById('spread').value);
-            const requestDate = document.getElementById('requestDate').value.replace(/-/g, '');
-            const todayDate = new Date().toISOString().split('T')[0].replace(/-/g, '');
+
+            // Calcula datas com base no período selecionado
+            const today = new Date();
+            const startDate = new Date(today);
+            startDate.setDate(today.getDate() - selectedPeriod);
+            const todayStr = today.toISOString().split('T')[0].replace(/-/g, '');
+            const startStr = startDate.toISOString().split('T')[0].replace(/-/g, '');
 
             try {
-                // Busca histórico desde a data de solicitação
-                // A API aceita o range no formato ?start_date=YYYYMMDD&end_date=YYYYMMDD
-                const url = `https://economia.awesomeapi.com.br/json/daily/USD-BRL/100?start_date=${requestDate}&end_date=${todayDate}`;
+                const url = `https://economia.awesomeapi.com.br/json/daily/USD-BRL/${selectedPeriod + 10}?start_date=${startStr}&end_date=${todayStr}`;
                 const response = await fetch(url);
                 const historyData = await response.json();
 
@@ -376,7 +392,7 @@
                 processData(historyData, amount, refRate, spread);
 
             } catch (err) {
-                alert("Erro ao buscar histórico. Tente uma data mais recente.");
+                alert("Erro ao buscar histórico. Tente novamente.");
                 console.error(err);
             } finally {
                 btn.disabled = false;
@@ -397,7 +413,7 @@
                 ? 'PTAX Oficial BCB'
                 : 'Taxa Manual (Corretora)';
 
-            globalData.params = { amount, refRate, spread, studyCost, currentTotal, diffActual, currentPTAX, rateSourceLabel };
+            globalData.params = { amount, refRate, spread, studyCost, currentTotal, diffActual, currentPTAX, rateSourceLabel, period: selectedPeriod };
             globalData.history = history.map(day => {
                 const ptax = parseFloat(day.bid);
                 const effective = ptax + spread;
@@ -515,6 +531,7 @@
                 head: [['Parâmetro', 'Valor']],
                 body: [
                     ['Montante', fmtUSD(p.amount)],
+                    ['Período Analisado', `Últimos ${p.period} dias`],
                     ['Taxa Referência (Estudo)', `R$ ${p.refRate.toFixed(4)}`],
                     ['Taxa Atual Utilizada', `R$ ${p.currentPTAX.toFixed(4)} (${p.rateSourceLabel})`],
                     ['Custo Previsto no Estudo', fmtBRL(p.studyCost)],
