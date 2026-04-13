@@ -97,15 +97,46 @@
                                 <input type="date" id="requestDate" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md focus:ring-brand-500 focus:border-brand-500" required>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4 mb-6">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">PTAX Hoje</label>
-                                    <input type="number" id="currentRate" step="0.0001" class="bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 cursor-not-allowed" readonly>
+                            <!-- Toggle fonte da taxa -->
+                            <div class="mb-4">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fonte da Taxa Atual</label>
+                                <div class="flex rounded-lg border border-slate-300 overflow-hidden text-sm font-semibold">
+                                    <button type="button" id="btn-ptax-bcb" onclick="setRateSource('bcb')"
+                                        class="flex-1 px-3 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 10h18M5 14h14M7 18h10" /></svg>
+                                        PTAX (BCB)
+                                    </button>
+                                    <button type="button" id="btn-ptax-manual" onclick="setRateSource('manual')"
+                                        class="flex-1 px-3 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        Taxa Manual
+                                    </button>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Spread (R$)</label>
-                                    <input type="number" id="spread" step="0.0001" value="0.0300" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md">
+                            </div>
+
+                            <!-- Campo taxa (BCB readonly / manual editável) -->
+                            <div class="mb-4">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase" id="label-rate-field">PTAX Oficial (BCB)</label>
+                                    <span id="bcb-status" class="text-xs text-slate-400 italic"></span>
                                 </div>
+                                <div class="relative">
+                                    <input type="number" id="currentRate" step="0.0001"
+                                        class="bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 cursor-not-allowed"
+                                        readonly placeholder="Buscando BCB...">
+                                    <div id="bcb-loading" class="hidden absolute right-3 top-2.5">
+                                        <svg class="animate-spin h-4 w-4 text-brand-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p id="manual-hint" class="hidden text-xs text-slate-400 mt-1">Digite a taxa que você está vendo na corretora agora.</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Spread (R$)</label>
+                                <input type="number" id="spread" step="0.0001" value="0.0300" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-md">
                             </div>
 
                             <button type="submit" id="btn-calculate" class="w-full bg-brand-600 text-white py-3 rounded-lg hover:bg-brand-700 font-bold shadow-lg transition flex justify-center items-center gap-2">
@@ -202,6 +233,7 @@
     <script>
         // Variáveis Globais
         let chartInstance = null;
+        let rateSource = 'bcb'; // 'bcb' ou 'manual'
         let globalData = {
             history: [],
             params: {}
@@ -211,12 +243,12 @@
         const fmtBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
         const fmtUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
 
-        // Inicialização: Setar data padrão (7 dias atrás)
+        // Inicialização
         window.onload = () => {
             const d = new Date();
             d.setDate(d.getDate() - 7);
             document.getElementById('requestDate').value = d.toISOString().split('T')[0];
-            fetchLiveRate();
+            setRateSource('bcb');
         };
 
         function goToDashboard() {
@@ -228,14 +260,86 @@
             location.reload();
         }
 
-        async function fetchLiveRate() {
+        // ---- Controle do Toggle de Fonte ----
+        function setRateSource(source) {
+            rateSource = source;
+            const field = document.getElementById('currentRate');
+            const btnBcb = document.getElementById('btn-ptax-bcb');
+            const btnManual = document.getElementById('btn-ptax-manual');
+            const labelField = document.getElementById('label-rate-field');
+            const manualHint = document.getElementById('manual-hint');
+
+            if (source === 'bcb') {
+                btnBcb.className = 'flex-1 px-3 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1.5';
+                btnManual.className = 'flex-1 px-3 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1.5';
+                field.readOnly = true;
+                field.className = 'bg-slate-100 w-full px-3 py-2 border border-slate-300 rounded-md text-slate-500 cursor-not-allowed';
+                field.placeholder = 'Buscando BCB...';
+                labelField.innerText = 'PTAX Oficial (BCB)';
+                manualHint.classList.add('hidden');
+                fetchBCBRate();
+            } else {
+                btnManual.className = 'flex-1 px-3 py-2 bg-brand-600 text-white transition flex items-center justify-center gap-1.5';
+                btnBcb.className = 'flex-1 px-3 py-2 bg-white text-slate-500 hover:bg-slate-50 transition flex items-center justify-center gap-1.5';
+                field.readOnly = false;
+                field.className = 'w-full px-3 py-2 bg-slate-50 border border-brand-400 rounded-md focus:ring-brand-500 focus:border-brand-500 text-slate-800';
+                field.placeholder = 'Ex: 5.8200';
+                field.value = '';
+                labelField.innerText = 'Taxa da Corretora (Manual)';
+                manualHint.classList.remove('hidden');
+                document.getElementById('bcb-status').innerText = '';
+                field.focus();
+            }
+        }
+
+        // ---- Busca PTAX oficial no Banco Central do Brasil ----
+        async function fetchBCBRate() {
+            const statusEl = document.getElementById('bcb-status');
+            const loadingEl = document.getElementById('bcb-loading');
+            const field = document.getElementById('currentRate');
+
+            loadingEl.classList.remove('hidden');
+            statusEl.innerText = 'Consultando BCB...';
+            field.value = '';
+
+            // Tenta os últimos 5 dias úteis (fins de semana/feriados não têm PTAX)
+            const today = new Date();
+            for (let i = 0; i <= 5; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() - i);
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                const dateStr = `${mm}-${dd}-${yyyy}`; // formato BCB: MM-DD-YYYY
+                const ptBR = `${dd}/${mm}/${yyyy}`;
+
+                try {
+                    const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao=%27${dateStr}%27&$top=1&$format=json&$select=cotacaoVenda`;
+                    const res = await fetch(url);
+                    const json = await res.json();
+
+                    if (json.value && json.value.length > 0) {
+                        const rate = json.value[0].cotacaoVenda;
+                        field.value = rate.toFixed(4);
+                        statusEl.innerText = `PTAX de ${ptBR}`;
+                        loadingEl.classList.add('hidden');
+                        fetchHistoryTicks(); // também atualiza os ticks laterais
+                        return;
+                    }
+                } catch (err) {
+                    // tenta próximo dia
+                }
+            }
+
+            // fallback: se BCB falhar, avisa o usuário
+            loadingEl.classList.add('hidden');
+            statusEl.innerText = '⚠ BCB indisponível';
+            field.placeholder = 'Não disponível';
+        }
+
+        // ---- Mini histórico lateral (AwesomeAPI - 5 dias) ----
+        async function fetchHistoryTicks() {
             try {
-                const res = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
-                const data = await res.json();
-                const rate = parseFloat(data.USDBRL.ask);
-                document.getElementById('currentRate').value = rate.toFixed(4);
-                
-                // Preencher mini histórico intraday
                 const resHist = await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/5');
                 const dataHist = await resHist.json();
                 const container = document.getElementById('history-ticks');
@@ -245,7 +349,7 @@
                         <span class="font-mono font-semibold">R$ ${parseFloat(item.bid).toFixed(4)}</span>
                     </div>
                 `).join('');
-            } catch (e) { console.error("Erro API", e); }
+            } catch (e) { console.error("Erro ao buscar ticks", e); }
         }
 
         async function handleSimulate(e) {
@@ -289,8 +393,11 @@
             const currentEffective = currentPTAX + spread;
             const currentTotal = amount * currentEffective;
             const diffActual = studyCost - currentTotal;
+            const rateSourceLabel = rateSource === 'bcb'
+                ? 'PTAX Oficial BCB'
+                : 'Taxa Manual (Corretora)';
 
-            globalData.params = { amount, refRate, spread, studyCost, currentTotal, diffActual };
+            globalData.params = { amount, refRate, spread, studyCost, currentTotal, diffActual, currentPTAX, rateSourceLabel };
             globalData.history = history.map(day => {
                 const ptax = parseFloat(day.bid);
                 const effective = ptax + spread;
@@ -409,6 +516,7 @@
                 body: [
                     ['Montante', fmtUSD(p.amount)],
                     ['Taxa Referência (Estudo)', `R$ ${p.refRate.toFixed(4)}`],
+                    ['Taxa Atual Utilizada', `R$ ${p.currentPTAX.toFixed(4)} (${p.rateSourceLabel})`],
                     ['Custo Previsto no Estudo', fmtBRL(p.studyCost)],
                     ['Custo Efetivo Hoje', fmtBRL(p.currentTotal)],
                     ['Resultado Final', fmtBRL(p.diffActual)]
